@@ -12,9 +12,9 @@ namespace DeviceManagement
     {
         private readonly List<Device> devices;
 
-        public string RoomId { get; set; }
-        public string RoomName { get; set; }
-        public int Capacity { get; set; }
+        public string RoomId { get; private set; }
+        public string RoomName { get; private set; }
+        public int Capacity { get; private set; }
         public IReadOnlyList<Device> Devices => devices;
 
         public ClassRoom(string roomId, string roomName, int capacity)
@@ -43,6 +43,16 @@ namespace DeviceManagement
         // Them thiet bi vao phong
         public void AddDevice(Device device)
         {
+            if (device == null)
+            {
+                throw new ArgumentNullException(nameof(device), "Thiet bi khong duoc null.");
+            }
+
+            if (FindDevice(device.Id) != null)
+            {
+                throw new ArgumentException($"Thiet bi voi ma {device.Id} da ton tai trong phong {RoomId}.");
+            }
+
             devices.Add(device);
         }
 
@@ -87,15 +97,23 @@ namespace DeviceManagement
             return totalCost;
         }
 
-        // Danh sach cac thiet bi can bao tri
+        // Danh sach cac thiet bi can bao tri (dang UnderMaintenance hoac da dung tren 5 nam)
         public List<Device> GetDevicesRequiringMaintenance()
         {
             List<Device> requiringMaintenance = new List<Device>();
+            int currentYear = DateTime.Now.Year;
+
             foreach (var device in devices)
             {
-                if (device != null && device.Status == DeviceStatus.UnderMaintenance)
+                if (device != null)
                 {
-                    requiringMaintenance.Add(device);
+                    bool isUnderMaintenance = device.Status == DeviceStatus.UnderMaintenance;
+                    bool isOverFiveYears = (currentYear - device.YearOfUse) > 5;
+
+                    if (isUnderMaintenance || isOverFiveYears)
+                    {
+                        requiringMaintenance.Add(device);
+                    }
                 }
             }
 
