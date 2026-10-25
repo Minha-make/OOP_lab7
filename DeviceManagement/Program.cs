@@ -117,9 +117,9 @@ namespace DeviceManagement
                 ac1.MarkAsUnderMaintenance();
                 slip1.AddDevice(ac1, 2);
             }
-            catch (BorrowingException ex)
+            catch (DeviceUnavailableException ex)
             {
-                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+                Console.WriteLine($"[Bat DeviceUnavailableException] {ex.Message} | DeviceId: {ex.DeviceId}, Status: {ex.CurrentStatus}");
             }
 
             // Tinh huong 2: Tro giang muon thiet bi thu 3 (han muc toi da 2)
@@ -136,9 +136,9 @@ namespace DeviceManagement
                 slip2.AddDevice(pr2_2, 2);
                 slip2.AddDevice(mc2_3, 1);
             }
-            catch (BorrowingException ex)
+            catch (BorrowLimitExceededException ex)
             {
-                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+                Console.WriteLine($"[Bat BorrowLimitExceededException] {ex.Message} | BorrowerId: {ex.BorrowerId}, Max: {ex.MaximumDevices}");
             }
 
             // Tinh huong 3: Them cung mot micro 2 lan vao phieu
@@ -152,9 +152,9 @@ namespace DeviceManagement
                 slip3.AddDevice(mc3, 1);
                 slip3.AddDevice(mc3, 1);
             }
-            catch (BorrowingException ex)
+            catch (DuplicateDeviceException ex)
             {
-                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+                Console.WriteLine($"[Bat DuplicateDeviceException] {ex.Message} | DeviceId: {ex.DeviceId}");
             }
 
             // Tinh huong 4: Muon micro 3 ngay du gioi han chi 1 ngay
@@ -167,9 +167,9 @@ namespace DeviceManagement
 
                 slip4.AddDevice(mc4, 3);
             }
-            catch (BorrowingException ex)
+            catch (InvalidBorrowPeriodException ex)
             {
-                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+                Console.WriteLine($"[Bat InvalidBorrowPeriodException] {ex.Message} | Requested: {ex.RequestedDays}, Max: {ex.MaximumDays}");
             }
 
             // Tinh huong 5: Tra dieu khien may chieu khong thuoc phieu
@@ -183,9 +183,9 @@ namespace DeviceManagement
 
                 slip5.ReturnDevice("PR999", DateTime.Now);
             }
-            catch (BorrowingException ex)
+            catch (DeviceNotInSlipException ex)
             {
-                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+                Console.WriteLine($"[Bat DeviceNotInSlipException] {ex.Message} | DeviceId: {ex.DeviceId}");
             }
 
             // Tinh huong 6: Tra cung mot thiet bi 2 lan
@@ -200,9 +200,9 @@ namespace DeviceManagement
                 slip6.ReturnDevice("PR006", DateTime.Now);
                 slip6.ReturnDevice("PR006", DateTime.Now);
             }
-            catch (BorrowingException ex)
+            catch (DeviceAlreadyReturnedException ex)
             {
-                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+                Console.WriteLine($"[Bat DeviceAlreadyReturnedException] {ex.Message} | DeviceId: {ex.DeviceId}");
             }
 
             // Tinh huong 7: Tra voi ngay tra truoc ngay muon
@@ -217,11 +217,10 @@ namespace DeviceManagement
 
                 DateTime invalidReturnDate = borrowDate7.AddDays(-1);
                 slip7.ReturnDevice("PR007", invalidReturnDate);
-                Console.WriteLine("Khong co ngoai le nem ra (do Return chua kiem tra ngay tra truoc ngay muon).");
             }
             catch (BorrowingException ex)
             {
-                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+                Console.WriteLine($"[Bat ngoai le ngay tra hop le] {ex.Message}");
             }
         }
     }
