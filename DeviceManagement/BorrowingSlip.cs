@@ -42,7 +42,7 @@ namespace DeviceManagement
             items = new List<BorrowItem>();
         }
 
-        // Them thiet bi vao phieu muon
+        // Them thiet bi vao phieu muon - xac thuc toan bo truoc khi doi trang thai
         public void AddDevice(TeachingDevice device, int borrowDays, int fromPeriod = 1, int toPeriod = 5)
         {
             if (device == null)
@@ -55,6 +55,12 @@ namespace DeviceManagement
                 throw new ArgumentException("So ngay muon phai lon hon 0.");
             }
 
+            if (fromPeriod <= 0 || toPeriod <= 0 || toPeriod < fromPeriod)
+            {
+                throw new ArgumentException("Tiet hoc khong hop le.");
+            }
+
+            // 1. Kiem tra trung lap thiet bi trong phieu
             foreach (var item in items)
             {
                 if (item.Device.Id == device.Id)
@@ -63,27 +69,36 @@ namespace DeviceManagement
                 }
             }
 
-            if (device.Status != DeviceStatus.Available)
-            {
-                throw new DeviceUnavailableException(device.Id, device.Status);
-            }
-
-            if (borrowDays > device.MaxBorrowDays)
-            {
-                throw new InvalidBorrowPeriodException(device.Id, borrowDays, device.MaxBorrowDays);
-            }
-
-            // Doi trang thai thiet bi truoc khi kiem tra han muc
-            device.MarkAsBorrowed();
-
-            // Kiem tra han muc nguoi muon
+            // 2. Kiem tra han muc cua nguoi muon truoc khi thuc hien
             if (items.Count >= Borrower.GetMaximumDevices())
             {
                 throw new BorrowLimitExceededException(Borrower.BorrowerId, Borrower.GetMaximumDevices());
             }
 
+            // 3. Kiem tra so ngay muon toi da cua thiet bi
+            if (borrowDays > device.MaxBorrowDays)
+            {
+                throw new InvalidBorrowPeriodException(device.Id, borrowDays, device.MaxBorrowDays);
+            }
+
+            // 4. Kiem tra san sang su dung bang da hinh
+            if (!device.IsReadyForUse())
+            {
+                throw new DeviceUnavailableException(device.Id, device.Status);
+            }
+
+            // 5. Kiem tra tuong thich phong doi voi dieu khien dieu hoa
+            if (device is AirConditionerRemote acRemote && !acRemote.IsCompatibleWith(TeachingRoom))
+            {
+                throw new BorrowingException($"Dieu khien dieu hoa {device.Id} khong tuong thich voi phong {TeachingRoom}.");
+            }
+
+            // 6. Khoi tao BorrowItem truoc
             DateTime dueDate = BorrowedDate.AddDays(borrowDays);
             BorrowItem borrowItem = new BorrowItem(device, BorrowedDate, dueDate, fromPeriod, toPeriod);
+
+            // 7. Chi sau khi tat ca dieu kien thoa man moi doi trang thai thiet bi
+            device.Borrow();
             items.Add(borrowItem);
         }
 
