@@ -30,6 +30,11 @@ namespace DeviceManagement
                 throw new ArgumentException("Ngay het han phai lon hon hoac bang ngay muon.");
             }
 
+            if (fromPeriod <= 0 || toPeriod <= 0)
+            {
+                throw new ArgumentException("Tiet hoc phai lon hon 0.");
+            }
+
             if (toPeriod < fromPeriod)
             {
                 throw new ArgumentException("Tiet ket thuc phai lon hon hoac bang tiet bat dau.");
@@ -51,16 +56,22 @@ namespace DeviceManagement
                 throw new DeviceAlreadyReturnedException(Device.Id);
             }
 
-            ReturnedDate = returnDate;
+            if (returnDate.Date < BorrowedDate.Date)
+            {
+                throw new BorrowingException("Ngay tra khong duoc truoc ngay muon.");
+            }
 
+            // Chi chuyen ve Available neu thiet bi dang Borrowed, khong ghi de UnderMaintenance
             if (Device.Status == DeviceStatus.Borrowed)
             {
                 Device.Return();
             }
             else
             {
-                Device.MarkAsAvailable();
+                throw new InvalidOperationException($"Thiet bi {Device.Id} khong o trang thai Borrowed (hien tai: {Device.Status}).");
             }
+
+            ReturnedDate = returnDate;
         }
 
         // Tinh phi tre han neu co
