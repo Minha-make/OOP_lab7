@@ -10,9 +10,9 @@ namespace DeviceManagement
     public abstract class Device
     {
         public string Id { get; }
-        public string Name { get; set; }
-        public int YearOfUse { get; set; }
-        public decimal PurchasePrice { get; set; }
+        public string Name { get; protected set; }
+        public int YearOfUse { get; protected set; }
+        public decimal PurchasePrice { get; protected set; }
         public DeviceStatus Status { get; protected set; }
 
         protected Device(string id, string name, int yearOfUse, decimal purchasePrice)
@@ -27,10 +27,9 @@ namespace DeviceManagement
                 throw new ArgumentException("Ten thiet bi khong duoc de trong.");
             }
 
-            // Kiem tra nam su dung
-            if (yearOfUse > DateTime.Now.Year)
+            if (yearOfUse <= 1900 || yearOfUse > DateTime.Now.Year)
             {
-                throw new ArgumentException("Nam dua vao su dung khong duoc lon hon nam hien tai.");
+                throw new ArgumentException("Nam dua vao su dung khong hop le.");
             }
 
             if (purchasePrice <= 0)
@@ -48,22 +47,37 @@ namespace DeviceManagement
         // Tinh chi phi bao tri hang nam
         public abstract decimal CalculateAnnualMaintenanceCost();
 
-        public void MarkAsBorrowed()
+        public virtual void MarkAsBorrowed()
         {
+            if (Status == DeviceStatus.Retired)
+            {
+                throw new InvalidOperationException("Thiet bi da thanh ly, khong the cho muon.");
+            }
+
             Status = DeviceStatus.Borrowed;
         }
 
-        public void MarkAsAvailable()
+        public virtual void MarkAsAvailable()
         {
+            if (Status == DeviceStatus.Retired)
+            {
+                throw new InvalidOperationException("Thiet bi da thanh ly, khong the dua ve Available.");
+            }
+
             Status = DeviceStatus.Available;
         }
 
-        public void MarkAsUnderMaintenance()
+        public virtual void MarkAsUnderMaintenance()
         {
+            if (Status == DeviceStatus.Retired)
+            {
+                throw new InvalidOperationException("Thiet bi da thanh ly, khong the dua vao bao tri.");
+            }
+
             Status = DeviceStatus.UnderMaintenance;
         }
 
-        public void MarkAsRetired()
+        public virtual void MarkAsRetired()
         {
             Status = DeviceStatus.Retired;
         }

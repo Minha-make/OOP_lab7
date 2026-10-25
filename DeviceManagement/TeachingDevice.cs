@@ -9,10 +9,23 @@ namespace DeviceManagement
 {
     public abstract class TeachingDevice : Device
     {
-        public string StorageLocation { get; set; } = string.Empty;
-        public int MaxBorrowDays { get; set; }
+        private string storageLocation = string.Empty;
 
-        // Constructor goi base
+        public string StorageLocation
+        {
+            get => storageLocation;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("Vi tri luu tru khong duoc de trong.");
+                }
+                storageLocation = value;
+            }
+        }
+
+        public int MaxBorrowDays { get; protected set; }
+
         protected TeachingDevice(string id, string name, int yearOfUse, decimal purchasePrice, int maxBorrowDays)
             : base(id, name, yearOfUse, purchasePrice)
         {
@@ -37,7 +50,7 @@ namespace DeviceManagement
                 throw new ArgumentException("So ngay muon toi da phai lon hon 0.");
             }
 
-            StorageLocation = storageLocation;
+            this.storageLocation = storageLocation;
             MaxBorrowDays = maxBorrowDays;
         }
 
@@ -54,7 +67,7 @@ namespace DeviceManagement
         {
             if (!IsReadyForUse())
             {
-                throw new InvalidOperationException("Thiet bi khong san sang de muon.");
+                throw new DeviceUnavailableException(Id, Status);
             }
 
             MarkAsBorrowed();

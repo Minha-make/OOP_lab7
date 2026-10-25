@@ -12,7 +12,7 @@ namespace DeviceManagement
     {
         private readonly HashSet<string> compatibleRooms;
 
-        public IReadOnlySet<string> CompatibleRooms => compatibleRooms;
+        public IReadOnlySet<string> CompatibleRooms => new HashSet<string>(compatibleRooms);
 
         public AirConditionerRemote(string id, string name, int yearOfUse, decimal purchasePrice)
             : base(id, name, yearOfUse, purchasePrice, 3)

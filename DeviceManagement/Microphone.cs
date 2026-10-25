@@ -9,8 +9,34 @@ namespace DeviceManagement
 {
     public class Microphone : TeachingDevice
     {
-        public int BatteryLevel { get; set; }
-        public int SignalQuality { get; set; }
+        private int batteryLevel;
+        private int signalQuality;
+
+        public int BatteryLevel
+        {
+            get => batteryLevel;
+            set
+            {
+                if (value < 0 || value > 100)
+                {
+                    throw new ArgumentException("Muc pin phai tu 0 den 100.");
+                }
+                batteryLevel = value;
+            }
+        }
+
+        public int SignalQuality
+        {
+            get => signalQuality;
+            set
+            {
+                if (value < 0 || value > 100)
+                {
+                    throw new ArgumentException("Chat luong tin hieu phai tu 0 den 100.");
+                }
+                signalQuality = value;
+            }
+        }
 
         public Microphone(string id, string name, int yearOfUse, decimal purchasePrice)
             : base(id, name, yearOfUse, purchasePrice, 1)
@@ -22,16 +48,6 @@ namespace DeviceManagement
         public Microphone(string id, string name, int yearOfUse, decimal purchasePrice, int batteryLevel, int signalQuality)
             : base(id, name, yearOfUse, purchasePrice, 1)
         {
-            if (batteryLevel < 0 || batteryLevel > 100)
-            {
-                throw new ArgumentException("Muc pin phai tu 0 den 100.");
-            }
-
-            if (signalQuality < 0 || signalQuality > 100)
-            {
-                throw new ArgumentException("Chat luong tin hieu phai tu 0 den 100.");
-            }
-
             BatteryLevel = batteryLevel;
             SignalQuality = signalQuality;
         }

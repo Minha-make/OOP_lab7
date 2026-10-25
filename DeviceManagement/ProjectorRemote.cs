@@ -9,7 +9,20 @@ namespace DeviceManagement
 {
     public class ProjectorRemote : TeachingDevice
     {
-        public int BatteryLevel { get; set; }
+        private int batteryLevel;
+
+        public int BatteryLevel
+        {
+            get => batteryLevel;
+            set
+            {
+                if (value < 0 || value > 100)
+                {
+                    throw new ArgumentException("Muc pin phai tu 0 den 100.");
+                }
+                batteryLevel = value;
+            }
+        }
 
         public ProjectorRemote(string id, string name, int yearOfUse, decimal purchasePrice)
             : base(id, name, yearOfUse, purchasePrice, 2)
@@ -20,11 +33,6 @@ namespace DeviceManagement
         public ProjectorRemote(string id, string name, int yearOfUse, decimal purchasePrice, int batteryLevel)
             : base(id, name, yearOfUse, purchasePrice, 2)
         {
-            if (batteryLevel < 0 || batteryLevel > 100)
-            {
-                throw new ArgumentException("Muc pin phai tu 0 den 100.");
-            }
-
             BatteryLevel = batteryLevel;
         }
 
