@@ -55,6 +55,14 @@ namespace DeviceManagement
                 throw new ArgumentException("So ngay muon phai lon hon 0.");
             }
 
+            foreach (var item in items)
+            {
+                if (item.Device.Id == device.Id)
+                {
+                    throw new DuplicateDeviceException(device.Id);
+                }
+            }
+
             if (device.Status != DeviceStatus.Available)
             {
                 throw new DeviceUnavailableException(device.Id, device.Status);
@@ -63,14 +71,6 @@ namespace DeviceManagement
             if (borrowDays > device.MaxBorrowDays)
             {
                 throw new InvalidBorrowPeriodException(device.Id, borrowDays, device.MaxBorrowDays);
-            }
-
-            foreach (var item in items)
-            {
-                if (item.Device.Id == device.Id)
-                {
-                    throw new DuplicateDeviceException(device.Id);
-                }
             }
 
             // Doi trang thai thiet bi truoc khi kiem tra han muc

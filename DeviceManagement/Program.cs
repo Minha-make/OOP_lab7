@@ -12,9 +12,14 @@ namespace DeviceManagement
     {
         static void Main(string[] args)
         {
+            // ==========================================
+            // PHAN 1: LUONG MUON TRA THANH CONG (11.1)
+            // ==========================================
             try
             {
+                Console.WriteLine("==========================================");
                 Console.WriteLine("=== DEMO LUONG MUON TRA THANH CONG ===");
+                Console.WriteLine("==========================================");
 
                 // 1. Tao giang vien
                 Lecturer lecturer = new Lecturer("GV001", "Nguyen Van An");
@@ -88,11 +93,135 @@ namespace DeviceManagement
             }
             catch (BorrowingException ex)
             {
-                Console.WriteLine($"Loi nghiep vu muon tra: {ex.Message}");
+                Console.WriteLine($"Loi nghiep vu: {ex.Message}");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Loi he thong: {ex.Message}");
+            }
+
+            // ==========================================
+            // PHAN 2: 7 TINH HUONG LOI (11.2)
+            // ==========================================
+            Console.WriteLine("\n==========================================");
+            Console.WriteLine("=== DEMO 7 TINH HUONG LOI ===");
+            Console.WriteLine("==========================================");
+
+            // Tinh huong 1: Muon dieu khien dieu hoa dang UnderMaintenance
+            Console.WriteLine("\n--- Tinh huong 1: Muon dieu khien dieu hoa dang UnderMaintenance ---");
+            try
+            {
+                Lecturer l1 = new Lecturer("GV001", "Nguyen Van A");
+                BorrowingSlip slip1 = new BorrowingSlip("PM001", l1, "P101", DateTime.Now);
+                AirConditionerRemote ac1 = new AirConditionerRemote("AC001", "Dieu khien dieu hoa", 2022, 400000m, new List<string> { "P101" });
+                ac1.MarkAsUnderMaintenance();
+                slip1.AddDevice(ac1, 2);
+            }
+            catch (BorrowingException ex)
+            {
+                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+            }
+
+            // Tinh huong 2: Tro giang muon thiet bi thu 3 (han muc toi da 2)
+            Console.WriteLine("\n--- Tinh huong 2: Tro giang muon thiet bi thu 3 ---");
+            try
+            {
+                TeachingAssistant ta2 = new TeachingAssistant("TA001", "Le Van B");
+                BorrowingSlip slip2 = new BorrowingSlip("PM002", ta2, "P102", DateTime.Now);
+                ProjectorRemote pr2_1 = new ProjectorRemote("PR002", "May chieu 1", 2023, 500000m);
+                ProjectorRemote pr2_2 = new ProjectorRemote("PR003", "May chieu 2", 2023, 500000m);
+                Microphone mc2_3 = new Microphone("MC002", "Micro 1", 2024, 1000000m);
+
+                slip2.AddDevice(pr2_1, 2);
+                slip2.AddDevice(pr2_2, 2);
+                slip2.AddDevice(mc2_3, 1);
+            }
+            catch (BorrowingException ex)
+            {
+                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+            }
+
+            // Tinh huong 3: Them cung mot micro 2 lan vao phieu
+            Console.WriteLine("\n--- Tinh huong 3: Them cung mot micro 2 lan ---");
+            try
+            {
+                Lecturer l3 = new Lecturer("GV002", "Tran Thi C");
+                BorrowingSlip slip3 = new BorrowingSlip("PM003", l3, "P103", DateTime.Now);
+                Microphone mc3 = new Microphone("MC003", "Micro Shure", 2024, 1200000m);
+
+                slip3.AddDevice(mc3, 1);
+                slip3.AddDevice(mc3, 1);
+            }
+            catch (BorrowingException ex)
+            {
+                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+            }
+
+            // Tinh huong 4: Muon micro 3 ngay du gioi han chi 1 ngay
+            Console.WriteLine("\n--- Tinh huong 4: Muon micro 3 ngay du gioi han 1 ngay ---");
+            try
+            {
+                Lecturer l4 = new Lecturer("GV004", "Pham Van D");
+                BorrowingSlip slip4 = new BorrowingSlip("PM004", l4, "P104", DateTime.Now);
+                Microphone mc4 = new Microphone("MC004", "Micro Shure", 2024, 1000000m);
+
+                slip4.AddDevice(mc4, 3);
+            }
+            catch (BorrowingException ex)
+            {
+                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+            }
+
+            // Tinh huong 5: Tra dieu khien may chieu khong thuoc phieu
+            Console.WriteLine("\n--- Tinh huong 5: Tra dieu khien may chieu khong thuoc phieu ---");
+            try
+            {
+                Lecturer l5 = new Lecturer("GV005", "Hoang Van E");
+                BorrowingSlip slip5 = new BorrowingSlip("PM005", l5, "P105", DateTime.Now);
+                ProjectorRemote pr5 = new ProjectorRemote("PR005", "May chieu Sony", 2023, 500000m);
+                slip5.AddDevice(pr5, 2);
+
+                slip5.ReturnDevice("PR999", DateTime.Now);
+            }
+            catch (BorrowingException ex)
+            {
+                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+            }
+
+            // Tinh huong 6: Tra cung mot thiet bi 2 lan
+            Console.WriteLine("\n--- Tinh huong 6: Tra cung mot thiet bi 2 lan ---");
+            try
+            {
+                Lecturer l6 = new Lecturer("GV006", "Do Van F");
+                BorrowingSlip slip6 = new BorrowingSlip("PM006", l6, "P106", DateTime.Now);
+                ProjectorRemote pr6 = new ProjectorRemote("PR006", "May chieu Panasonic", 2023, 600000m);
+                slip6.AddDevice(pr6, 2);
+
+                slip6.ReturnDevice("PR006", DateTime.Now);
+                slip6.ReturnDevice("PR006", DateTime.Now);
+            }
+            catch (BorrowingException ex)
+            {
+                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
+            }
+
+            // Tinh huong 7: Tra voi ngay tra truoc ngay muon
+            Console.WriteLine("\n--- Tinh huong 7: Tra voi ngay tra truoc ngay muon ---");
+            try
+            {
+                Lecturer l7 = new Lecturer("GV007", "Vu Van G");
+                DateTime borrowDate7 = new DateTime(2026, 10, 20);
+                BorrowingSlip slip7 = new BorrowingSlip("PM007", l7, "P107", borrowDate7);
+                ProjectorRemote pr7 = new ProjectorRemote("PR007", "May chieu Epson", 2023, 550000m);
+                slip7.AddDevice(pr7, 2);
+
+                DateTime invalidReturnDate = borrowDate7.AddDays(-1);
+                slip7.ReturnDevice("PR007", invalidReturnDate);
+                Console.WriteLine("Khong co ngoai le nem ra (do Return chua kiem tra ngay tra truoc ngay muon).");
+            }
+            catch (BorrowingException ex)
+            {
+                Console.WriteLine($"[Bat ngoai le] {ex.Message}");
             }
         }
     }
